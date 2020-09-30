@@ -9,7 +9,7 @@ import org.windmill.dao.impl.UserInfoDaoImpl;
 import org.windmill.model.ParamsEntity;
 import org.windmill.model.ResponeEntity;
 import org.windmill.model.UserInfoEntity;
-
+import com.alibaba.fastjson.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,12 +22,14 @@ import java.util.Properties;
 //@WebServlet(name = "ApiServlet",urlPatterns = "/apiServlet")
 public class ApiServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setHeader("content-type", "text/html;charset=UTF-8");
         BufferedReader reader=null;
-        StringBuilder builder=null;
+        StringBuilder builder=new StringBuilder();
         try{
             reader=request.getReader();
             String str=null;
-            while ((reader.readLine())!=null){
+            while ((str=reader.readLine())!=null){
                 builder.append(str);
             }
         }catch (Exception ex){
@@ -37,12 +39,14 @@ public class ApiServlet extends HttpServlet {
                 reader.close();
             }
         }
-        ParamsEntity mParamsEntity=null;
+        ParamsEntity<UserInfoEntity> mParamsEntity=null;
         try{
-            mParamsEntity= JSON.parseObject(builder.toString(),ParamsEntity.class);
+            //mParamsEntity= (ParamsEntity<UserInfoEntity>)JSON.parseObject(builder.toString(),ParamsEntity.class);
+            mParamsEntity= (ParamsEntity<UserInfoEntity>)JSON.parseObject(builder.toString(),new TypeReference<ParamsEntity<UserInfoEntity>>(){});
         }catch (Exception ex){
 
         }
+        System.out.println("params="+builder.toString());
         Properties ps=new Properties();
         ResponeEntity<UserInfoEntity> entity=new ResponeEntity<>();
         //ServletContext cxt=config.getServletContext();
@@ -71,4 +75,6 @@ public class ApiServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request,response);
     }
+
+
 }
