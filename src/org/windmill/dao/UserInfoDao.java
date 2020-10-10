@@ -7,4 +7,5 @@ public interface UserInfoDao {
     UserInfoEntity findByUID(String uid);
     boolean deleteUser(UserInfoEntity entity);
     boolean deleteUserByUID(String uid);
+    UserInfoEntity userLogin(UserInfoEntity entity);
 }

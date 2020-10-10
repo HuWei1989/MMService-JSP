@@ -48,7 +48,7 @@ public class ApiServlet extends HttpServlet {
         }
         System.out.println("params="+builder.toString());
         Properties ps=new Properties();
-        ResponeEntity<UserInfoEntity> entity=new ResponeEntity<>();
+        ResponeEntity<Object> entity=new ResponeEntity<>();
         //ServletContext cxt=config.getServletContext();
         //InputStream in=cxt.getResourceAsStream("/WEB-INF/language.properties");
         if(mParamsEntity!=null){
@@ -60,6 +60,15 @@ public class ApiServlet extends HttpServlet {
                     userInfoDao.addUserInfo((UserInfoEntity)mParamsEntity.getData());
                 }else {
                     entity.setCode(HttpCode.CODE_USER_INFO_ERROR);
+                }
+            }else if(HttpMethod.USER_LOGIN.equalsIgnoreCase(mParamsEntity.getMethod())){
+                //用户登录
+                if(mParamsEntity.getData()!=null&&(mParamsEntity.getData() instanceof UserInfoEntity)){
+                    UserInfoDao userInfoDao=new UserInfoDaoImpl();
+                    UserInfoEntity entity1=userInfoDao.userLogin((UserInfoEntity)mParamsEntity.getData());
+                    entity.setData(entity1);
+                }else {
+                    entity.setCode(HttpCode.CODE_USER_INFO_CODE_PSW_ERROR);
                 }
             }else {
                 entity.setCode(HttpCode.CODE_METHOD_ERROR);
