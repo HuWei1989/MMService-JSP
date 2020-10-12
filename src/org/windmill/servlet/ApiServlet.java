@@ -57,7 +57,12 @@ public class ApiServlet extends HttpServlet {
                 //注册用户
                 if(mParamsEntity.getData()!=null&&(mParamsEntity.getData() instanceof UserInfoEntity)){
                     UserInfoDao userInfoDao=new UserInfoDaoImpl();
-                    userInfoDao.addUserInfo((UserInfoEntity)mParamsEntity.getData());
+                    int count=userInfoDao.findUserByPhoneEmail((UserInfoEntity)mParamsEntity.getData());
+                    if(count==0){
+                        userInfoDao.addUserInfo((UserInfoEntity)mParamsEntity.getData());
+                    }else {
+                        entity.setCode(HttpCode.CODE_REG_USER_EXIST);
+                    }
                 }else {
                     entity.setCode(HttpCode.CODE_USER_INFO_ERROR);
                 }

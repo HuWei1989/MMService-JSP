@@ -2,6 +2,7 @@ package org.windmill.dao.impl;
 
 import org.windmill.dao.UserInfoDao;
 import org.windmill.model.UserInfoEntity;
+import org.windmill.util.TextUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
             ps.setString(1, UUID.randomUUID().toString());
             ps.setString(2,entity.getPhone());
             ps.setString(3,entity.getEmail());
-            ps.setString(4,entity.getPassword());
+            ps.setString(4, TextUtil.getInstance().encryptByMD5(entity.getPassword()));
             row=ps.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -55,7 +56,7 @@ public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
             ps=this.mConn.prepareStatement(sql);
             ps.setString(1, entity.getPhone());
             ps.setString(2,entity.getEmail());
-            ps.setString(3,entity.getPassword());
+            ps.setString(3,TextUtil.getInstance().encryptByMD5(entity.getPassword()));
             result = ps.executeQuery();
             if(result!=null){
                 rEntity=new UserInfoEntity();
@@ -73,5 +74,29 @@ public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
         }
         disConnect();
         return rEntity;
+    }
+
+    @Override
+    public int findUserByPhoneEmail(UserInfoEntity entity) {
+        connect();
+        String sql1="select count(id) as ucount from userinfo where phone=? or email=?";
+        PreparedStatement ps1=null,ps2=null;
+        ResultSet result =null;
+        int count=0;
+        try {
+            ps1=this.mConn.prepareStatement(sql1);
+            ps1.setString(1,entity.getPhone());
+            ps1.setString(2,entity.getEmail());
+            result = ps1.executeQuery();
+            if(result!=null) {
+                while (result.next()) {
+                    count=result.getInt("ucount");
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        disConnect();
+        return count;
     }
 }

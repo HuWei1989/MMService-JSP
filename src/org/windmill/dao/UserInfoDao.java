@@ -8,4 +8,5 @@ public interface UserInfoDao {
     boolean deleteUser(UserInfoEntity entity);
     boolean deleteUserByUID(String uid);
     UserInfoEntity userLogin(UserInfoEntity entity);
+    int findUserByPhoneEmail(UserInfoEntity entity);
 }
