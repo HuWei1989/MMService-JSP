@@ -42,4 +42,14 @@ public class ParamsEntity<T> implements Serializable {
     //api版本
     int apiversion;
     T data;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    String token;
 }

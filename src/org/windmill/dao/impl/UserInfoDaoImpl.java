@@ -7,6 +7,7 @@ import org.windmill.util.TextUtil;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.UUID;
 
 public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
@@ -49,7 +50,9 @@ public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
     public UserInfoEntity userLogin(UserInfoEntity entity) {
         connect();
         String sql="select * from userinfo where (phone=? or email=?) and password=?";
+        String sql2="UPDATE userinfo SET token=? WHERE uid=? ";
         PreparedStatement ps=null;
+        PreparedStatement ps2=null;
         ResultSet result =null;
         UserInfoEntity rEntity=null;
         try {
@@ -69,11 +72,39 @@ public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
                     rEntity.setUage(result.getInt("uage"));
                 }
             }
+            //生成新的token
+            if(rEntity!=null&&rEntity.getUid()!=null&&!"".equals(rEntity.getUid().trim())){
+                String token=updateUserToken(rEntity.getUid().trim());
+                ps2=this.mConn.prepareStatement(sql);
+                ps2.setString(1, token);
+                ps2.setString(2,entity.getUid().trim());
+                int row=ps2.executeUpdate();
+                if(row>0){
+                    rEntity.setToken(token);
+                }
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         disConnect();
+
         return rEntity;
+    }
+
+    /**
+     * 生成token
+     * @param uid
+     */
+    private String updateUserToken(String uid){
+        String token="";
+        if(uid!=null&&!"".equalsIgnoreCase(uid.trim())){
+            StringBuilder builder=new StringBuilder();
+            builder.append(new Date().getTime());
+            builder.append(uid.trim());
+            token=TextUtil.getInstance().encryptByMD5(builder.toString());
+            //更新token
+        }
+        return token;
     }
 
     @Override

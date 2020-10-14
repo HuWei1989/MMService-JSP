@@ -75,4 +75,14 @@ public class UserInfoEntity {
     }
 
     private String email;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    private String token;
 }

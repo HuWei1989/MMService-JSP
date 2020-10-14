@@ -14,4 +14,6 @@ public class HttpCode {
     public static final int CODE_USER_INFO_CODE_PSW_ERROR=0X6;
     //注册用户已存在
     public static final int CODE_REG_USER_EXIST=0X7;
+    //token错误
+    public static final int CODE_token_ERROR=0X8;
 }
