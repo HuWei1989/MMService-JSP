@@ -75,9 +75,9 @@ public class UserInfoDaoImpl extends BaseDaoImpl implements UserInfoDao {
             //生成新的token
             if(rEntity!=null&&rEntity.getUid()!=null&&!"".equals(rEntity.getUid().trim())){
                 String token=updateUserToken(rEntity.getUid().trim());
-                ps2=this.mConn.prepareStatement(sql);
+                ps2=this.mConn.prepareStatement(sql2);
                 ps2.setString(1, token);
-                ps2.setString(2,entity.getUid().trim());
+                ps2.setString(2,rEntity.getUid().trim());
                 int row=ps2.executeUpdate();
                 if(row>0){
                     rEntity.setToken(token);
